@@ -1,0 +1,57 @@
+# Implementation Plan - ADT Webpage Builder
+
+## Goal
+Transform the current static "ADT List" page into a **Generic ADT Webpage Builder**. The user will input ADT details (Name, Axioms, Operations) and Implementations (Contiguous/Chained), and the app will generate a structured webpage for that ADT.
+
+## User Review Required
+> [!IMPORTANT]
+> **Data Persistence**: For this version, data will just be stored in the React state (reset on refresh).
+
+## Proposed Changes
+
+### Architecture
+Refactor [App.tsx](file:///c:/Users/yacin/Desktop/New%20folder%20%287%29/ADT%20List/adt/src/App.tsx) from a static layout to a **Split-Pane Application**:
+1.  **Left/Top Pane (Editor)**: Forms to input ADT data.
+2.  **Right/Bottom Pane (Preview)**: A live view of the "generated" webpage (using the premium styling we established).
+
+### Data Model (`src/types.ts`)
+```typescript
+interface ADT {
+  name: string;
+  domain: string;
+  uses: string;
+  operations: Operation[];
+  axioms: string[];
+  implementations: {
+    contiguous: string; // pseudo-code
+    chained: string;    // pseudo-code
+  };
+}
+
+interface Operation {
+  name: string;
+  signature: string;
+  description?: string;
+}
+```
+
+### Components
+
+#### [NEW] [ADTEditor](new)
+-   `src/components/builder/ADTEditor.tsx`: Main form container.
+-   `src/components/builder/OperationInput.tsx`: Dynamic list for adding operations.
+
+#### [NEW] [ADTPreview](new)
+-   `src/components/builder/ADTPreview.tsx`: The "Template" that consumes the [ADT](file:///c:/Users/yacin/Desktop/New%20folder%20%287%29/ADT%20List/adt/src/components/ADTDefinition.tsx#3-62) object and renders the beautiful documentation view (reusing [Section](file:///c:/Users/yacin/Desktop/New%20folder%20%287%29/ADT%20List/adt/src/components/Section.tsx#10-18), [ImplementationView](file:///c:/Users/yacin/Desktop/New%20folder%20%287%29/ADT%20List/adt/src/components/ImplementationView.tsx#7-162) logic but dynamic).
+
+#### [MODIFY] [App.tsx](file:///c:/Users/yacin/Desktop/New%20folder%20%287%29/ADT%20List/adt/src/App.tsx)
+-   Manage the [ADT](file:///c:/Users/yacin/Desktop/New%20folder%20%287%29/ADT%20List/adt/src/components/ADTDefinition.tsx#3-62) state.
+-   Render `ADTEditor` and `ADTPreview`.
+
+#### [DELETE]
+-   [src/components/ADTDefinition.tsx](file:///c:/Users/yacin/Desktop/New%20folder%20%287%29/ADT%20List/adt/src/components/ADTDefinition.tsx) (Static)
+-   [src/components/ImplementationView.tsx](file:///c:/Users/yacin/Desktop/New%20folder%20%287%29/ADT%20List/adt/src/components/ImplementationView.tsx) (Static - logic will move to Preview)
+
+## Verification Plan
+-   User enters "Stack" ADT.
+-   Preview updates in real-time to show "Stack" documentation.
